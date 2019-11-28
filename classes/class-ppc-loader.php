@@ -53,7 +53,6 @@ if ( ! class_exists( 'PPC_Loader' ) ) :
 			add_action( 'wp_ajax_ppc_checklistitem_delete', array( $this, 'ppc_delete_item' ), 1 );
 			add_action( 'wp_ajax_ppc_checklistitem_drag', array( $this, 'ppc_drag_item' ), 1 );
 			add_action( 'wp_ajax_ppc_checklistitem_edit', array( $this, 'ppc_edit_item' ), 1 );
-			// register_activation_hook( __FILE__, 'get_list' );
 		}
 
 		/**

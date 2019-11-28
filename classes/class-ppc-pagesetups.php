@@ -142,7 +142,7 @@ if ( ! class_exists( 'PPC_Pagesetups' ) ) :
 				$ppc_checklist_data = get_option( 'ppc_cpt_checklist_data' );
 				$ppc_page_data      = $ppc_checklist_data[ $key ];
 				$current_post_type  = get_current_screen();
-				if ( $current_post_type->post_type == $key ) {
+				if ( $current_post_type->post_type === $key ) {
 					?>
 				<select class="select_multiple" name="slect_opt" id="slect_opt">
 					<option value="">Filter Unchecked...</option>
@@ -151,10 +151,9 @@ if ( ! class_exists( 'PPC_Pagesetups' ) ) :
 						<?php if ( isset( $_GET['slect_opt'] ) && wp_verify_nonce( sanitize_key( $_GET['slect_opt'] ) ) ) { ?>
 							<?php $type = wp_verify_nonce( sanitize_key( $_GET['slect_opt'] ) ); ?>
 						<?php } ?>
-						<?php if( isset( $_GET['slect_opt'] ) ) { ?>
-    					<?php echo $_GET['slect_opt'] == $ppc_key ? 'selected' : '';  ?>
-						<?php }?>>
-					
+						<?php if ( isset( $_GET['slect_opt'] ) ) { ?>
+							<?php echo $_GET['slect_opt'] === $ppc_key ? 'selected' : ''; ?>
+						<?php } ?>>
 						<?php echo esc_attr( wp_unslash( $val ) ); ?>
 					</option>
 					<?php } ?>

@@ -28,8 +28,8 @@ wp_enqueue_script( 'jQuery-ui-droppable' );
 		<?php
 		$ppc_post_types = get_option( 'ppc_post_types_to_display' );
 		foreach ( get_post_types( array( 'public' => true ), 'objects' ) as $ppc_post_type_slug => $ppc_post_type_obj ) {
-			if ( in_array( $ppc_post_type_slug, $ppc_post_types ) ) {
-				$ppc_active_class = ( $ppc_type == $ppc_post_type_slug ) ? 'ppc-active' : '';
+			if ( in_array( $ppc_post_type_slug, $ppc_post_types, true ) ) {
+				$ppc_active_class = ( $ppc_type === $ppc_post_type_slug ) ? 'ppc-active' : '';
 				echo '<li class="' . esc_attr( $ppc_active_class ) . '"><a href="' . esc_url( admin_url( 'options-general.php?page=ppc&tab=ppc-checklist&type=' ) . $ppc_post_type_slug ) . ' "> ' . esc_attr( $ppc_post_type_obj->label ) . '  </a></li>';
 			}
 		}
@@ -37,7 +37,7 @@ wp_enqueue_script( 'jQuery-ui-droppable' );
 	</ul>
 </div>
 <?php
-if( !empty($ppc_post_types )){
+if ( ! empty( $ppc_post_types ) ) {
 	?>
 	<div class="ppc-table-wrapper">
 		<table class="form-table ppc-form-table">
@@ -60,8 +60,8 @@ if( !empty($ppc_post_types )){
 										</li>
 										<?php
 									}
-								}	
-								?>
+							}
+							?>
 							</ul>
 						</div>
 						<p class="ppc-empty-list"><?php esc_html_e( 'You do not have any items in the list. Please add items in the list.', 'pre-publish-checklist' ); ?></p>
@@ -89,8 +89,8 @@ if( !empty($ppc_post_types )){
 		</tbody>
 	</table>
 </div>
-<?php } 
-else {
+	<?php
+} else {
 	?>
 	<div class="ppc-table-wrapper">
 		<table class="form-table ppc-form-table">
@@ -98,7 +98,7 @@ else {
 				<tr>
 					<th scope="row"><p class="ppc-list-label"><span class="spinner ppc-spinner"></span><?php esc_html_e( 'Pre-Publish Checklist', 'pre-publish-checklist' ); ?></p> </th>
 					<td class="ppc-list-table">
-						<p class="ppc-empty-list"><?php esc_html_e( 'Please select the post type to display the list.' ); ?></p>
+						<p class="ppc-empty-list"><?php esc_html_e( 'Please select the post type to display the list.', 'pre-publish-checklist' ); ?></p>
 					</td>
 				</tr>
 			</tbody>
