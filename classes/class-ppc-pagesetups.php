@@ -90,7 +90,7 @@ if ( ! class_exists( 'PPC_Pagesetups' ) ) :
 			$total          = get_option( 'ppc_cpt_checklist_data' );
 			$checked        = get_post_meta( get_the_ID(), '_ppc_meta_key', true );
 			$a              = get_current_screen();
-			$post_val_array = $total[ $a->post_type ];
+			$post_val_array = isset( $total[ $a->post_type ] ) ? $total[ $a->post_type ] : '';
 			switch ( $columns ) {
 				case 'ppc_checklist':
 					if ( ! isset( $post_val_array ) || empty( $post_val_array ) && ! isset( $checked ) || empty( $checked ) ) {
@@ -102,13 +102,13 @@ if ( ! class_exists( 'PPC_Pagesetups' ) ) :
 							echo esc_html( sprintf( __( '%1$d items completed out of %2$d', 'pre-publish-checklist' ), count( $res ), count( $post_val_array ) ) );
 							echo '<br>';
 							?>
-					<progress value="<?php echo (int) count( $res ); ?>" max="<?php echo (int) count( $post_val_array ); ?>"></progress>
+						<progress value="<?php echo (int) count( $res ); ?>" max="<?php echo (int) count( $post_val_array ); ?>"></progress>
 							<?php
 						} elseif ( count( $post_val_array ) === count( $res ) ) {
 							echo esc_html( sprintf( __( 'Checklist is complete', 'pre-publish-checklist' ) ) );
 							echo '<br>';
 							?>
-					<progress value="<?php echo (int) count( $res ); ?>" max="<?php echo (int) count( $post_val_array ); ?>"></progress>
+						<progress value="<?php echo (int) count( $res ); ?>" max="<?php echo (int) count( $post_val_array ); ?>"></progress>
 							<?php
 						}
 					}
@@ -141,28 +141,35 @@ if ( ! class_exists( 'PPC_Pagesetups' ) ) :
 		 * @since 1.0.0
 		 */
 		public function add_dropdown() {
-			$ppc_pst_type = get_option( 'ppc_post_types_to_display' );
-			foreach ( $ppc_pst_type as $key ) {
-				$ppc_checklist_data = get_option( 'ppc_cpt_checklist_data' );
-				$ppc_page_data      = $ppc_checklist_data[ $key ];
-				$current_post_type  = get_current_screen();
-				if ( $current_post_type->post_type === $key ) {
-					?>
-				<select class="select_multiple" name="slect_opt" id="slect_opt">
-					<option value="">Filter Unchecked...</option>
-					<?php foreach ( $ppc_page_data as $ppc_key => $val ) { ?>
-					<option value="<?php echo esc_attr( $ppc_key ); ?>" class="test"
-						<?php if ( isset( $_GET['slect_opt'] ) && wp_verify_nonce( sanitize_key( $_GET['slect_opt'] ) ) ) { ?>
-							<?php $type = wp_verify_nonce( sanitize_key( $_GET['slect_opt'] ) ); ?>
-						<?php } ?>
-						<?php if ( isset( $_GET['slect_opt'] ) ) { ?>
-							<?php echo $_GET['slect_opt'] === $ppc_key ? 'selected' : ''; ?>
-						<?php } ?>>
-						<?php echo esc_attr( wp_unslash( $val ) ); ?>
-					</option>
-					<?php } ?>
-				</select>
-					<?php
+			$ppc_pst_type       = get_option( 'ppc_post_types_to_display' );
+			$ppc_checklist_data = get_option( 'ppc_cpt_checklist_data' );
+			if ( isset( $ppc_pst_type ) && isset( $ppc_checklist_data ) ) {
+				foreach ( $ppc_pst_type as $key ) {
+					$ppc_page_data     = isset( $ppc_checklist_data[ $key ] ) ? $ppc_checklist_data[ $key ] : '';
+					$current_post_type = get_current_screen();
+					if ( $current_post_type->post_type === $key ) {
+						?>
+						<select class="select_multiple" name="slect_opt" id="slect_opt">
+							<option value="">Filter Unchecked...</option>
+							<?php
+							if ( isset( $ppc_page_data ) && is_array( $ppc_page_data ) ) {
+								foreach ( $ppc_page_data as $ppc_key => $val ) {
+									?>
+									<option value="<?php echo esc_attr( $ppc_key ); ?>" class="test"
+										<?php if ( isset( $_GET['slect_opt'] ) && wp_verify_nonce( sanitize_key( $_GET['slect_opt'] ) ) ) { ?>
+											<?php $type = wp_verify_nonce( sanitize_key( $_GET['slect_opt'] ) ); ?>
+										<?php } ?>
+										<?php if ( isset( $_GET['slect_opt'] ) ) { ?>
+											<?php echo $_GET['slect_opt'] === $ppc_key ? 'selected' : ''; ?>
+											<?php } ?>>
+											<?php echo esc_attr( wp_unslash( $val ) ); ?>
+										</option>
+									<?php } ?>
+								}	
+							</select>
+								<?php
+							}
+					}
 				}
 			}
 		}
@@ -310,18 +317,18 @@ if ( ! class_exists( 'PPC_Pagesetups' ) ) :
 				foreach ( $ppc_checklist_item_data[ $ppc_screen ] as $ppc_key => $ppc_value ) {
 					?>
 					<label for="<?php echo esc_attr( $ppc_key ); ?>">
-					<div class="ppc-checklist-item-wrapper">
-						<input type="checkbox" name="checkbox[]" id="<?php echo esc_attr( $ppc_key ); ?>" class="ppc_checkboxes" value= "<?php echo esc_attr( $ppc_key ); ?>" 
-																				<?php
-																				empty( $value ) ? '' : checked( true, array_key_exists( $ppc_key, $value ) );
-																				?>
-						>
-					<div class="ppc-checklist"><?php echo esc_attr( $ppc_value ); ?></div></div>
-				</label>
-					<?php
+						<div class="ppc-checklist-item-wrapper">
+							<input type="checkbox" name="checkbox[]" id="<?php echo esc_attr( $ppc_key ); ?>" class="ppc_checkboxes" value= "<?php echo esc_attr( $ppc_key ); ?>" 
+							<?php
+							empty( $value ) ? '' : checked( true, array_key_exists( $ppc_key, $value ) );
+							?>
+							>
+							<div class="ppc-checklist"><?php echo esc_attr( $ppc_value ); ?></div></div>
+						</label>
+						<?php
 				}
 				?>
-				<?php
+					<?php
 			} else {
 				echo 'Please create a list to display here from Settings->Pre-Publish-Checklist';
 			}
