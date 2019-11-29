@@ -91,24 +91,28 @@ if ( ! class_exists( 'PPC_Pagesetups' ) ) :
 			$checked        = get_post_meta( get_the_ID(), '_ppc_meta_key', true );
 			$a              = get_current_screen();
 			$post_val_array = $total[ $a->post_type ];
-			if ( ! isset( $post_val_array ) || empty( $post_val_array ) && ! isset( $checked ) || empty( $checked ) ) {
-				echo esc_html( sprintf( __( 'Checklist is empty', 'pre-publish-checklist' ) ) );
-			} elseif ( isset( $post_val_array ) && ! empty( $post_val_array ) && isset( $checked ) && ! empty( $checked ) ) {
-				$res = array_intersect_key( $post_val_array, $checked );
-				if ( isset( $res ) && ! empty( $res ) && count( $post_val_array ) > count( $res ) ) {
-					/* translators: %d: number term */
-					echo esc_html( sprintf( __( '%1$d items completed out of %2$d', 'pre-publish-checklist' ), count( $res ), count( $post_val_array ) ) );
-					echo '<br>';
-					?>
+			switch ( $columns ) {
+				case 'ppc_checklist':
+					if ( ! isset( $post_val_array ) || empty( $post_val_array ) && ! isset( $checked ) || empty( $checked ) ) {
+						echo esc_html( sprintf( __( 'Checklist is empty', 'pre-publish-checklist' ) ) );
+					} elseif ( isset( $post_val_array ) && ! empty( $post_val_array ) && isset( $checked ) && ! empty( $checked ) ) {
+						$res = array_intersect_key( $post_val_array, $checked );
+						if ( isset( $res ) && ! empty( $res ) && count( $post_val_array ) > count( $res ) ) {
+							/* translators: %d: number term */
+							echo esc_html( sprintf( __( '%1$d items completed out of %2$d', 'pre-publish-checklist' ), count( $res ), count( $post_val_array ) ) );
+							echo '<br>';
+							?>
 					<progress value="<?php echo (int) count( $res ); ?>" max="<?php echo (int) count( $post_val_array ); ?>"></progress>
-					<?php
-				} elseif ( count( $post_val_array ) === count( $res ) ) {
-					echo esc_html( sprintf( __( 'Checklist is complete', 'pre-publish-checklist' ) ) );
-					echo '<br>';
-					?>
+							<?php
+						} elseif ( count( $post_val_array ) === count( $res ) ) {
+							echo esc_html( sprintf( __( 'Checklist is complete', 'pre-publish-checklist' ) ) );
+							echo '<br>';
+							?>
 					<progress value="<?php echo (int) count( $res ); ?>" max="<?php echo (int) count( $post_val_array ); ?>"></progress>
-					<?php
-				}
+							<?php
+						}
+					}
+					break;
 			}
 		}
 		/**
